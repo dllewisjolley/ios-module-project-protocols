@@ -40,13 +40,32 @@ enum Rank: Int, CustomStringConvertible {
             
         }
     }
+    
+    static var allRanks: [Rank] = [.ace, .two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king]
 }
 //: ## Step 7
 //: In the rank enum, add a static computed property that returns all the ranks in an array. Name this property `allRanks`. This is needed because you can't iterate over all cases from an enum automatically.
+
+
+
 //: ## Step 16
 //: Take a look at the Swift docs for the [Comparable](https://developer.apple.com/documentation/swift/comparable) protocol. In particular, look at the two functions called `<` and `==`.
 //: ## Step 17
 //: Make the `Rank` type conform to the `Comparable` protocol. Implement the `<` and `==` functions such that they compare the `rawValue` of the `lhs` and `rhs` arguments passed in. This will allow us to compare two rank values with each other and determine whether they are equal, or if not, which one is larger.
+
+extension Rank: Comparable {
+    static func < (lhs: Rank, rhs: Rank) -> Bool {
+            return lhs.rawValue < rhs.rawValue
+        }
+    
+    static func ==(lhs: Rank, rhs: Rank) -> Bool {
+        return lhs.rawValue == rhs.rawValue
+    }
+    
+    
+}
+
+
 
 
 
@@ -54,6 +73,15 @@ enum Rank: Int, CustomStringConvertible {
 //: Create an enum for the suit of a playing card. The values are `hearts`, `diamonds`, `spades`, and `clubs`. Use a raw type of `String` for this enum (this will allow us to get a string version of the enum cases for free, no use of `CustomStringConvertible` required).
 //: ## Step 8
 //: In the suit enum, add a static computed property that returns all the suits in an array. Name this property `allSuits`.
+
+enum Suits: String {
+    case hearts = "Hearts"
+    case diamonds = "Diamonds"
+    case spades = "Spades"
+    case clubs = "Clubs"
+    
+    static var allSuits: [Suits] = [.hearts, .diamonds, .spades, .clubs]
+}
 
 
 
@@ -64,10 +92,43 @@ enum Rank: Int, CustomStringConvertible {
 //: Step 18
 //: Make the `Card` type conform to the `Comparable` protocol. Implement the `<` and `==` methods such that they compare the ranks of the `lhs` and `rhs` arguments passed in. For the `==` method, compare **both** the rank and the suit.
 
+struct Card: CustomStringConvertible, Comparable {
+    static func < (lhs: Card, rhs: Card) -> Bool {
+        return lhs.rank != rhs.rank
+    }
+    
+    static func ==(lhs: Card, rhs: Card) -> Bool {
+        return lhs.rank == rhs.rank && lhs.suit == rhs.suit
+    }
+    
+    var description: String {
+        return "\(rank) of \(suit)"
+    }
+    
+    let rank: Rank
+    let suit: Suits
+    
+    
+}
+
 
 
 //: ## Step 6
 //: Create a `struct` to model a deck of cards. It should be called `Deck` and have an array of `Card` objects as a constant property. A custom `init` function should be created that initializes the array with a card of each rank and suit. You'll want to iterate over all ranks, and then over all suits (this is an example of _nested `for` loops_). See the next 2 steps before you continue with the nested loops.
+
+struct Deck {
+    
+   var cardDeck: [Card] = []
+    
+    init() {
+        for rank in Rank.allRanks {
+            for suit in Suits.allSuits {
+                self.cardDeck = [Card(rank: rank, suit: suit)]
+            }
+        }
+    }
+    
+}
 //: ## Step 9
 //: Back to the `Deck` and the nested loops. Now that you have a way to get arrays of all rank values and all suit values, create 2 `for` loops in the `init` method, one nested inside the other, where you iterate over each value of rank, and then iterate over each value of suit. See an example below to get an idea of how this will work. Imagine an enum that contains the 4 cardinal directions, and imagine that enum has a property `allDirections` that returns an array of them.
 //: ```
